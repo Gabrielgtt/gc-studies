@@ -4,7 +4,7 @@ Esse estudo segue os passos descritos no tutorial [Do It Yourself (OpenJDK) Garb
 
 ## Tutorial
 
-####Primeiro contato com GC
+#### Primeiro contato com GC
 O primeiro contato pode ser feito através de um teste introdutório utilizando o No-Op Garbage Collector(coletor de lixo não operacional) conhecido como Epsilon. Para isso, podemos inicialmente criar um arquivo chamado Test.java (que tambem está disponivel na pasta Codigos), utilizando o comando:
 
 ```shell
