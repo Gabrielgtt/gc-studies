@@ -32,13 +32,13 @@ public class Test {
 Em seguida, é utilizado o seguinte comando para compilar o programa:
 
 ```shell
-javac Test.java
+$ javac Test.java
 ```
 
 Logo apoś ele ser compilado, podemos executá-lo utilizando:
 
 ```shell
-java -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC Test
+$ java -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC Test
 ```
 >Neste ponto é necessário ter atenção ao local que está a flag 
 >**“-XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC”**, 
@@ -71,7 +71,7 @@ $ mkdir gc
 ```
 2. Instalar o git:
 ```shell
-apt-get install git
+$ apt-get install git
 ```
 3. Entrar na pasta e clonar o projeto, da seguinte maneira:
 ```shell
@@ -82,11 +82,11 @@ $ git checkout --track origin/epsilon-mark-compact
 ```
 4. Agora, criamos a OpenJDK
 ```shell
-sh ./configure --with-debug-level=fastdebug
+$ sh ./configure --with-debug-level=fastdebug
 ```
 >Talvez seja necessário também a instalação do autoconf, que pode ser feita da seguinte maneira:
 ```shell
-apt-get install autoconf
+$ apt-get install autoconf
 ```
 Após instalá-lo, rodamos novamente o comando do passo 4.
 
