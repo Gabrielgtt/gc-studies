@@ -90,6 +90,13 @@ $ apt-get install autoconf
 ```
 Após instalá-lo, rodamos novamente o comando do passo 4.
 
+5. Neste ponto rodaremos o make, que ira seguir uam serie de passos que irão construir nosso GC:
+```shell
+$ make images
+```
+> Neste ponto, o processo pode demorar um pouco de acordo com a capcidade da maquina que esta executando-o, caso veja essa demora entenda como algo normal, principalmente no arquivo **jdk.unsupported.desktop**
+> Ao longo da execução pode ser pedido a instalação de algum pacote que não está presente, seguindo o passo a passo exibido no terminal é possivel instala-los.
+
 ## Usando containers
 
 Se as dependências estiverem muito quebradas, faltando ou em versões conflitantes, pode-se rodar o tutorial dentro de um container Docker. Para isso é preciso instalar as dependências docker na sua máquina local e em seguida seguir o tutorial de dentro do container criado.
