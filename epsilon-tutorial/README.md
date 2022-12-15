@@ -80,22 +80,68 @@ $ git clone https://github.com/shipilev/jdk.git epsilon-jdk
 $ cd epsilon-jdk
 $ git checkout --track origin/epsilon-mark-compact
 ```
-4. Agora, criamos a OpenJDK
+4. Agora, compilamos a JDK
+> Para compilação, precisamos passar o jtreg com sua versão superior a 6, que pode ser instada com:
 ```shell
-$ sh ./configure --with-debug-level=fastdebug
+$ apt-get install jtreg6
 ```
->Talvez seja necessário também a instalação do autoconf, que pode ser feita da seguinte maneira:
+Após isso, podemos realmente compila-lá, passando o local aonde está presente o lib/jtreg.jar em nosso sistema:
+```shell
+$ sh ./configure --with-debug-level=fastdebug --with-jtreg=/usr/share/jtreg
+```
+> Caso tenha dificuldade em achar o caminho, o comando dpkg-query -L jtreg6 e verificando qual tem como caminho final /lib/jtreg.jar, pegando assim todo o caminho que tem até a barra, no meu caso /usr/share/jtreg.
+> Talvez seja necessário também a instalação do autoconf, que pode ser feita da seguinte maneira:
 ```shell
 $ apt-get install autoconf
 ```
 Após instalá-lo, rodamos novamente o comando do passo 4.
 
-5. Neste ponto rodaremos o make, que ira seguir uam serie de passos que irão construir nosso GC:
+5. Neste ponto rodamos o make, que irá seguir uma série de passos que irão construir nosso GC:
 ```shell
 $ make images
 ```
-> Neste ponto, o processo pode demorar um pouco de acordo com a capcidade da maquina que esta executando-o, caso veja essa demora entenda como algo normal, principalmente no arquivo **jdk.unsupported.desktop**
-> Ao longo da execução pode ser pedido a instalação de algum pacote que não está presente, seguindo o passo a passo exibido no terminal é possivel instala-los.
+> Neste ponto, o processo pode demorar um pouco de acordo com a capacidade da máquina que está executando-o, caso veja essa demora entenda como algo normal, principalmente no arquivo **jdk.unsupported.desktop**
+> Ao longo da execução pode ser pedido a instalação de algum pacote que não está presente, seguindo o passo a passo exibido no terminal é possível instalá-los.
+
+6. Agora, podemos rodar um teste para verificar a integridade do nosso GC podemos rodar uma série de testes. Estes teste foram projetados inicialmente para o epsilon, logo não deveríamos ter problema ao executá-los.
+```shell
+$ CONF=linux-x86_64-server-fastdebug make images run-test TEST=gc/epsilon/
+Building targets 'images run-test' in configuration 'linux-x86_64-server-fastdebug'
+ * jtreg:test/hotspot/jtreg/gc/epsilon
+ Running test 'jtreg:test/hotspot/jtreg/gc/epsilon'
+Passed: gc/epsilon/TestAlwaysPretouch.java
+Passed: gc/epsilon/TestAlignment.java
+Passed: gc/epsilon/TestElasticTLAB.java
+Passed: gc/epsilon/TestEpsilonEnabled.java
+Passed: gc/epsilon/TestHelloWorld.java
+Passed: gc/epsilon/TestLogTrace.java
+Passed: gc/epsilon/TestDieDefault.java
+Passed: gc/epsilon/TestDieWithOnError.java
+Passed: gc/epsilon/TestMemoryPools.java
+Passed: gc/epsilon/TestMaxTLAB.java
+Passed: gc/epsilon/TestPrintHeapSteps.java
+Passed: gc/epsilon/TestArraycopyCheckcast.java
+Passed: gc/epsilon/TestClasses.java
+Passed: gc/epsilon/TestUpdateCountersSteps.java
+Passed: gc/epsilon/TestDieWithHeapDump.java
+Passed: gc/epsilon/TestByteArrays.java
+Passed: gc/epsilon/TestManyThreads.java
+Passed: gc/epsilon/TestRefArrays.java
+Passed: gc/epsilon/TestObjects.java
+Passed: gc/epsilon/TestElasticTLABDecay.java
+Passed: gc/epsilon/TestSlidingGC.java
+Test results: passed: 21
+TEST SUCCESS
+```
+
+Agora que vimos que sua integridade está ok, podemos também fazer testes mais sofisticados com ele, dessa maneira:
+```shell
+CONF=linux-x86_64-server-fastdebug make images run-test TEST=tier1 TEST_VM_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -XX:+EpsilonSlidingGC -XX:+EpsilonVerify"
+SlidingGC -XX:+EpsilonVerify"
+Building targets 'images run-test' in configuration 'linux-x86_64-server-fastdebug'
+...
+```
+> A maioria dos testes irão passar, contudo é normal que alguns acabem falhando , principalmente aqueles que têm referências fracas e classes que ainda não foram carregadas.
 
 ## Usando containers
 
@@ -120,7 +166,7 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o 
 ```shell
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 ```
-- Installe o docker via apt
+- Instale o docker via apt
 ```shell
 sudo apt update
 sudo apt install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
